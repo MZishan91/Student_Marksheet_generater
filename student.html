@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="bg-gray-200 p-6">
 
@@ -53,26 +54,33 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://ikakdwsamatbmzylgox.supabase.co'; // Your actual Supabase URL
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYXFkd3pzYW10Ym1wenlhZ29xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxODc3MzksImV4cCI6MjA0Mjc2MzczOX0.CtgTXZnF18DPWK033nShiPBxnA8DxSHupCmNEIrXcLA'; // Your public API key
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
             const rollNumber = document.getElementById('rollNumber').value;
             const password = document.getElementById('password').value;
 
-            // Fetch student data from localStorage
-            const studentData = JSON.parse(localStorage.getItem(rollNumber));
+            // Fetch student data from Supabase
+            const { data, error } = await supabase
+                .from('students')
+                .select('*')
+                .eq('roll_number', rollNumber)
+                .eq('password', password)
+                .single();
 
-            if (studentData && studentData.password === password) {
-                // Display marksheet
-                document.getElementById('studentName').innerText = `Student Name: ${studentData.studentName}`;
-                document.getElementById('mathsMarks').innerText = studentData.marks.maths;
-                document.getElementById('scienceMarks').innerText = studentData.marks.science;
-                document.getElementById('englishMarks').innerText = studentData.marks.english;
-
-                // Show the marksheet section
-                document.getElementById('marksheet').classList.remove('hidden');
+            if (error) {
+                alert('Error fetching data: ' + error.message);
             } else {
-                alert('Invalid roll number or password!');
+                document.getElementById('studentName').innerText = 'Name: ' + data.student_name;
+                document.getElementById('mathsMarks').innerText = data.marks.mathematics;
+                document.getElementById('scienceMarks').innerText = data.marks.science;
+                document.getElementById('englishMarks').innerText = data.marks.english;
+                document.getElementById('marksheet').classList.remove('hidden');
             }
         });
     </script>
