@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-200 p-6">
+
+    <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Student Login</h1>
+        <form id="loginForm">
+            <div class="mb-4">
+                <label class="block text-gray-700">Roll Number</label>
+                <input type="text" id="rollNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700">Password</label>
+                <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Login</button>
+        </form>
+
+        <div id="marksheet" class="mt-8 hidden">
+            <h2 class="text-2xl font-bold text-center text-blue-600">Marksheet</h2>
+            <p id="studentName" class="text-xl mt-4"></p>
+            <table class="min-w-full mt-4 table-auto">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2">Subject</th>
+                        <th class="px-4 py-2">Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border px-4 py-2">Mathematics</td>
+                        <td id="mathsMarks" class="border px-4 py-2"></td>
+                    </tr>
+                    <tr>
+                        <td class="border px-4 py-2">Science</td>
+                        <td id="scienceMarks" class="border px-4 py-2"></td>
+                    </tr>
+                    <tr>
+                        <td class="border px-4 py-2">English</td>
+                        <td id="englishMarks" class="border px-4 py-2"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const rollNumber = document.getElementById('rollNumber').value;
+            const password = document.getElementById('password').value;
+
+            // Fetch student data from localStorage
+            const studentData = JSON.parse(localStorage.getItem(rollNumber));
+
+            if (studentData && studentData.password === password) {
+                // Display marksheet
+                document.getElementById('studentName').innerText = `Student Name: ${studentData.studentName}`;
+                document.getElementById('mathsMarks').innerText = studentData.marks.maths;
+                document.getElementById('scienceMarks').innerText = studentData.marks.science;
+                document.getElementById('englishMarks').innerText = studentData.marks.english;
+
+                // Show the marksheet section
+                document.getElementById('marksheet').classList.remove('hidden');
+            } else {
+                alert('Invalid roll number or password!');
+            }
+        });
+    </script>
+</body>
+</html>

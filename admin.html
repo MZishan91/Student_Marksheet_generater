@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Student Marks</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold text-center mb-6 text-blue-600">Admin - Add Student Marks</h1>
+        <form id="marksForm">
+            <div class="mb-4">
+                <label class="block text-gray-700">Student Name</label>
+                <input type="text" id="studentName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Roll Number</label>
+                <input type="text" id="rollNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Password</label>
+                <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Mathematics Marks</label>
+                <input type="number" id="mathsMarks" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Science Marks</label>
+                <input type="number" id="scienceMarks" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">English Marks</label>
+                <input type="number" id="englishMarks" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save Data</button>
+        </form>
+    </div>
+
+    <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://ikaqdwzsamtbmmpzyagoq.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYXFkd3pzYW10Ym1wenlhZ29xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxODc3MzksImV4cCI6MjA0Mjc2MzczOX0.CtgTXZnF18DPWK033nShiPBxnA8DxSHupCmNEIrXcLA';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('marksForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const studentName = document.getElementById('studentName').value;
+            const rollNumber = document.getElementById('rollNumber').value;
+            const password = document.getElementById('password').value;
+            const mathsMarks = document.getElementById('mathsMarks').value;
+            const scienceMarks = document.getElementById('scienceMarks').value;
+            const englishMarks = document.getElementById('englishMarks').value;
+
+            // Save student data in Supabase
+            const { data, error } = await supabase
+                .from('students')
+                .insert([
+                    { 
+                        studentName, 
+                        rollNumber, 
+                        password, 
+                        marks: {
+                            mathematics: mathsMarks,
+                            science: scienceMarks,
+                            english: englishMarks
+                        }
+                    }
+                ]);
+
+            if (error) {
+                console.error('Error saving data:', error);
+                alert('Failed to save data.');
+            } else {
+                alert('Student data saved successfully!');
+                document.getElementById('marksForm').reset();
+            }
+        });
+    </script>
+</body>
+</html>
